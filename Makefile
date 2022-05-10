@@ -2,26 +2,31 @@ NAME = get_next_line.a
 
 SOURCES = get_next_line.c get_next_line_utils.c
 OBJECTS = $(SOURCES:.c=.o)
-FLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g
 
-ARCHIVE = ar rcs
-BUFFER = -D BUFFER_SIZE=42
+BUFFER = -D BUFFER_SIZE=2
 REMOVE = rm -rf
 
 all: $(NAME)
 
-$(OBJECTS): $(SOURCES)
-	cc $(FLAGS) $(BUFFER) -c $(SOURCES)
-
 $(NAME): $(OBJECTS)
-	$(ARCHIVE) $(NAME) $(OBJECTS)
+	@cc $(CFLAGS) $(BUFFER) $(OBJECTS) -o test
+
+$(OBJECTS): $(SOURCES)
+	@cc $(CFLAGS) $(BUFFER) -c $(SOURCES)
 
 clean:
-	$(REMOVE) $(OBJECTS)
+	@$(REMOVE) $(OBJECTS)
 
 fclean: clean
-	$(REMOVE) $(NAME)
+	@$(REMOVE) $(NAME) test
 
 re: fclean all
 
-.PHONY: all clean fclean re
+test: all
+	@./test
+
+vg:
+	valgrind ./test
+
+.PHONY: all clean fclean re test valgrind

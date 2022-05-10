@@ -6,79 +6,13 @@
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 22:25:47 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/05 23:14:03 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/10 21:10:43 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
-#include <fcntl.h>
 
-size_t	ft_strlen(const char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (*str)
-	{
-		str++;
-		i++;
-	}
-	return (i);
-}
-
-void	*ft_memcpy(void *dst, const void *src, size_t n)
-{
-	size_t	i;
-	char	*aux_dst;
-	char	*aux_src;
-
-	i = 0;
-	if (!dst && !src)
-		return (NULL);
-	aux_dst = (char *)dst;
-	aux_src = (char *)src;
-	while (i < n)
-	{
-		aux_dst[i] = aux_src[i];
-		i++;
-	}
-	return (dst);
-}
-
-char	*ft_strdup(const char *s)
-{
-	char	*clone;
-	size_t	len;
-
-	len = ft_strlen(s) + 1;
-	clone = (char *)malloc(len * sizeof(char));
-	if (!clone)
-		return (NULL);
-	clone[len] = 0;
-	ft_memcpy(clone, s, len);
-	return (clone);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	char	*aux;
-
-	if (c > 255)
-		return ((void *)s);
-	aux = (char *)s;
-	while (*aux)
-	{
-		if (*aux == c)
-			return (aux);
-		aux++;
-	}
-	if (*aux == c)
-		return (aux);
-	return (NULL);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
+static char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*cat;
 	size_t	len;
@@ -107,37 +41,74 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (cat);
 }
 
+static char	*ft_badsplit(char **line_static)
+{
+	int		i;
+	char	*line;
+	char	*temp;
+
+	i = 0;
+	if (!line_static[0])
+		return (NULL);
+	while (line_static[0][i] != '\n' && line_static[0][i] != '\0')
+		i++;
+	line = ft_substr(*line_static, 0, (i + 1));
+	temp = ft_strdup(*line_static);
+	free(*line_static);
+	*line_static = ft_substr(temp, (i + 1), ft_strlen(temp));
+	free(temp);
+	if (!ft_strchr(line, '\n'))
+	{
+		free(line_static[0]);
+		line_static[0] = NULL;
+	}
+	return (line);
+}
+
 char	*get_next_line(int fd)
 {
 	char		*found;
 	char		*temp;
-	static char	*line;
+	static char	*line_static;
 	int			file_read;
 
 	found = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	file_read = read (fd, found, BUFFER_SIZE);
 	while (file_read)
 	{
-		if (line == NULL)
-			line = ft_strdup(found);
+		found[file_read] = 0;
+		if (line_static == NULL)
+			line_static = ft_strdup(found);
 		else
 		{
-			temp = ft_strjoin(line, found);
-			free(line);
-			line = temp;
+			temp = ft_strjoin(line_static, found);
+			free(line_static);
+			line_static = temp;
 		}
-		if (ft_strchr(line, '\n'))
+		if (ft_strchr(line_static, '\n'))
 			break ;
 		file_read = read (fd, found, BUFFER_SIZE);
 	}
-	return (line);
+	free(found);
+	return (ft_badsplit(&line_static));
 }
 
-// int main()
-// {
-// 	char *gnl;
-// 	int fd;
-// 	fd = open("file", O_RDONLY);
-// 	gnl = get_next_line(fd);
-// 	printf("gnl:%s", gnl);
-// }
+#include <stdio.h>
+#include <fcntl.h>
+
+int	main(void)
+{
+	char	*gnl;
+	int		fd;
+
+	fd = open("file", O_RDONLY);
+	gnl = get_next_line(fd);
+	while (gnl)
+	{
+		printf("%s", gnl);
+		free(gnl);
+		gnl = get_next_line(fd);
+	}
+	printf("\n");
+	return (0);
+}
