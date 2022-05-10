@@ -1,12 +1,27 @@
 NAME = get_next_line.a
 
-O_PATH = ./objects
-S_PATH = ./sources
-I_PATH = ./includes
-
-CC = cc
+SOURCES = get_next_line.c get_next_line_utils.c
+OBJECTS = $(SOURCES:.c=.o)
 FLAGS = -Wall -Wextra -Werror
 
-ARCHIVE = ar -rcs
+ARCHIVE = ar rcs
+BUFFER = -D BUFFER_SIZE=42
+REMOVE = rm -rf
 
-H_FILE = get_next_line.h
+all: $(NAME)
+
+$(OBJECTS): $(SOURCES)
+	cc $(FLAGS) $(BUFFER) -c $(SOURCES)
+
+$(NAME): $(OBJECTS)
+	$(ARCHIVE) $(NAME) $(OBJECTS)
+
+clean:
+	$(REMOVE) $(OBJECTS)
+
+fclean: clean
+	$(REMOVE) $(NAME)
+
+re: fclean all
+
+.PHONY: all clean fclean re
