@@ -10,10 +10,10 @@ REMOVE = rm -rf
 all: $(NAME)
 
 $(NAME): $(OBJECTS)
-	@cc $(CFLAGS) $(BUFFER) $(OBJECTS) -o test
+	cc $(BUFFER) $(CFLAGS) -o test $(OBJECTS)
 
 $(OBJECTS): $(SOURCES)
-	@cc $(CFLAGS) $(BUFFER) -c $(SOURCES)
+	cc $(CFLAGS) $(BUFFER) -c $(SOURCES)
 
 clean:
 	@$(REMOVE) $(OBJECTS)

@@ -6,11 +6,13 @@
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 22:25:47 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/10 21:10:43 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/11 00:19:21 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
+#include <fcntl.h>
 
 static char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -72,6 +74,8 @@ char	*get_next_line(int fd)
 	static char	*line_static;
 	int			file_read;
 
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	found = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
 	file_read = read (fd, found, BUFFER_SIZE);
 	while (file_read)
@@ -89,26 +93,22 @@ char	*get_next_line(int fd)
 			break ;
 		file_read = read (fd, found, BUFFER_SIZE);
 	}
-	free(found);
-	return (ft_badsplit(&line_static));
+	return (free(found), ft_badsplit(&line_static));
 }
 
-#include <stdio.h>
-#include <fcntl.h>
+// int	main(void)
+// {
+// 	char	*gnl;
+// 	int		fd;
 
-int	main(void)
-{
-	char	*gnl;
-	int		fd;
-
-	fd = open("file", O_RDONLY);
-	gnl = get_next_line(fd);
-	while (gnl)
-	{
-		printf("%s", gnl);
-		free(gnl);
-		gnl = get_next_line(fd);
-	}
-	printf("\n");
-	return (0);
-}
+// 	fd = open("file", O_RDONLY);
+// 	gnl = get_next_line(fd);
+// 	while (gnl)
+// 	{
+// 		printf("%s", gnl);
+// 		free(gnl);
+// 		gnl = get_next_line(fd);
+// 	}
+// 	printf("\n");
+// 	return (0);
+// }
