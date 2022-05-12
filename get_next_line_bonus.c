@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 22:25:47 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/12 19:52:49 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/12 19:54:53 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -79,7 +79,7 @@ char	*get_next_line(int fd)
 {
 	char		*found;
 	char		*temp;
-	static char	*line_static;
+	static char	*line_static[OPEN_MAX];
 	int			file_read;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
@@ -89,17 +89,17 @@ char	*get_next_line(int fd)
 	while (file_read > 0)
 	{
 		found[file_read] = 0;
-		if (line_static == NULL)
-			line_static = ft_strdup(found);
+		if (line_static[fd] == NULL)
+			line_static[fd] = ft_strdup(found);
 		else
 		{
-			temp = ft_strjoin(line_static, found);
-			ft_freethis(&line_static);
-			line_static = temp;
+			temp = ft_strjoin(line_static[fd], found);
+			ft_freethis(&line_static[fd]);
+			line_static[fd] = temp;
 		}
-		if (ft_strchr(line_static, '\n'))
+		if (ft_strchr(line_static[fd], '\n'))
 			break ;
 		file_read = read (fd, found, BUFFER_SIZE);
 	}
-	return (ft_freethis(&found), ft_badsplit(&line_static));
+	return (ft_freethis(&found), ft_badsplit(&line_static[fd]));
 }
