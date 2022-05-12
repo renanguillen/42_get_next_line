@@ -4,7 +4,7 @@ SOURCES = get_next_line.c get_next_line_utils.c
 OBJECTS = $(SOURCES:.c=.o)
 CFLAGS = -Wall -Wextra -Werror -g
 
-BUFFER = -D BUFFER_SIZE=2
+BUFFER = -D BUFFER_SIZE=1
 REMOVE = rm -rf
 
 all: $(NAME)

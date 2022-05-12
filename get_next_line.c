@@ -6,7 +6,7 @@
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 22:25:47 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/11 17:38:19 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/12 19:35:19 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,11 @@ static char	*ft_badsplit(char **line_static)
 	line_static[0] = ft_substr(temp, (i + 1), ft_strlen(temp));
 	ft_freethis(&temp);
 	if (!ft_strchr(line, '\n'))
+	{
+		if (!ft_strlen(line))
+			ft_freethis(&line);
 		ft_freethis(line_static);
+	}
 	return (line);
 }
 
@@ -82,9 +86,9 @@ char	*get_next_line(int fd)
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	found = (char *)malloc(sizeof(char) * BUFFER_SIZE + 1);
+	found = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	file_read = read (fd, found, BUFFER_SIZE);
-	while (file_read)
+	while (file_read > 0)
 	{
 		found[file_read] = 0;
 		if (line_static == NULL)
@@ -101,20 +105,3 @@ char	*get_next_line(int fd)
 	}
 	return (ft_freethis(&found), ft_badsplit(&line_static));
 }
-
-// int	main(void)
-// {
-// 	char	*gnl;
-// 	int		fd;
-
-// 	fd = open("file", O_RDONLY);
-// 	gnl = get_next_line(fd);
-// 	while (gnl)
-// 	{
-// 		printf("%s", gnl);
-// 		ft_freethis(&gnl);
-// 		gnl = get_next_line(fd);
-// 	}
-// 	printf("\n");
-// 	return (0);
-// }
