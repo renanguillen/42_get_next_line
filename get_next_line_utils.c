@@ -6,7 +6,7 @@
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/10 20:46:16 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/10 20:57:06 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/11 17:32:01 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,8 @@ char	*ft_strdup(const char *s)
 	char	*clone;
 	size_t	len;
 
-	len = ft_strlen(s) + 1;
-	clone = (char *)malloc(len * sizeof(char));
+	len = ft_strlen(s);
+	clone = (char *)malloc(sizeof(char) * (len + 1));
 	if (!clone)
 		return (NULL);
 	clone[len] = 0;

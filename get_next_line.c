@@ -6,7 +6,7 @@
 /*   By: ridalgo- <ridalgo-@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/03 22:25:47 by ridalgo-          #+#    #+#             */
-/*   Updated: 2022/05/11 00:19:21 by ridalgo-         ###   ########.fr       */
+/*   Updated: 2022/05/11 17:38:19 by ridalgo-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ static char	*ft_strjoin(char const *s1, char const *s2)
 
 	i = 0;
 	j = 0;
-	len = ft_strlen(s1) + ft_strlen(s2) + 1;
-	cat = (char *)malloc(len * sizeof(char));
+	len = ft_strlen(s1) + ft_strlen(s2);
+	cat = (char *)malloc(sizeof(char) * (len + 1));
 	if (!cat)
 		return (NULL);
 	cat[len] = 0;
@@ -43,6 +43,15 @@ static char	*ft_strjoin(char const *s1, char const *s2)
 	return (cat);
 }
 
+static void	ft_freethis(char **str)
+{
+	if (str[0])
+	{
+		free(str[0]);
+		str[0] = NULL;
+	}
+}
+
 static char	*ft_badsplit(char **line_static)
 {
 	int		i;
@@ -54,16 +63,13 @@ static char	*ft_badsplit(char **line_static)
 		return (NULL);
 	while (line_static[0][i] != '\n' && line_static[0][i] != '\0')
 		i++;
-	line = ft_substr(*line_static, 0, (i + 1));
-	temp = ft_strdup(*line_static);
-	free(*line_static);
-	*line_static = ft_substr(temp, (i + 1), ft_strlen(temp));
-	free(temp);
+	line = ft_substr(line_static[0], 0, (i + 1));
+	temp = ft_strdup(line_static[0]);
+	ft_freethis(line_static);
+	line_static[0] = ft_substr(temp, (i + 1), ft_strlen(temp));
+	ft_freethis(&temp);
 	if (!ft_strchr(line, '\n'))
-	{
-		free(line_static[0]);
-		line_static[0] = NULL;
-	}
+		ft_freethis(line_static);
 	return (line);
 }
 
@@ -86,14 +92,14 @@ char	*get_next_line(int fd)
 		else
 		{
 			temp = ft_strjoin(line_static, found);
-			free(line_static);
+			ft_freethis(&line_static);
 			line_static = temp;
 		}
 		if (ft_strchr(line_static, '\n'))
 			break ;
 		file_read = read (fd, found, BUFFER_SIZE);
 	}
-	return (free(found), ft_badsplit(&line_static));
+	return (ft_freethis(&found), ft_badsplit(&line_static));
 }
 
 // int	main(void)
@@ -106,7 +112,7 @@ char	*get_next_line(int fd)
 // 	while (gnl)
 // 	{
 // 		printf("%s", gnl);
-// 		free(gnl);
+// 		ft_freethis(&gnl);
 // 		gnl = get_next_line(fd);
 // 	}
 // 	printf("\n");
